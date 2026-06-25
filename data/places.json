@@ -1,0 +1,53 @@
+[
+    {
+        "id": "food-cheap-001",
+        "name": "Warteg Ibu Sari Premium",
+        "category": "food-cheap",
+        "tags": [
+            "Nasi Rames",
+            "Lauk Pauk",
+            "Murah",
+            "Mahasiswa"
+        ],
+        "address": "Jl. Raya Jatinangor No. 123",
+        "maps_url": "https://maps.google.com/?q=Warteg+Ibu+Sari+Jatinangor",
+        "price_range": 1,
+        "description": "Warteg andalan mahasiswa dengan pilihan lauk yang sangat beragam dan harga bersahabat.",
+        "hours": "Sen–Sab 06.00–21.00",
+        "phone": "0812-2345-6789",
+        "last_updated": "2026-06-01"
+    },
+    {
+        "id": "food-cafe-001",
+        "name": "Plumeria Cafe",
+        "category": "food-cafe-wifi",
+        "tags": [
+            "Kopi",
+            "Wifi Ngebut",
+            "Nugas"
+        ],
+        "address": "Jl. Ciseke Besar No. 45",
+        "maps_url": "https://maps.google.com/?q=Plumeria+Cafe+Jatinangor",
+        "price_range": 2,
+        "description": "Tempat nugas nyaman dengan kopi enak. Colokan banyak dan wifi kencang.",
+        "hours": "Setiap Hari 10.00–23.00",
+        "featured": true,
+        "last_updated": "2026-06-15"
+    },
+    {
+        "id": "printing-001",
+        "name": "Tiara Fotokopi & Print",
+        "category": "printing",
+        "tags": [
+            "Print Warna",
+            "Jilid Hardcover",
+            "Skripsi"
+        ],
+        "address": "Gerbang Lama Unpad",
+        "maps_url": "https://maps.google.com/?q=Tiara+Fotokopi",
+        "price_range": 1,
+        "description": "Buka 24 jam saat musim ujian. Melayani jilid skripsi kilat.",
+        "phone": "0856-7890-1234",
+        "last_updated": "2025-10-01"
+    }
+]
