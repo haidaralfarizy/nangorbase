@@ -71,6 +71,54 @@
         </div>
     </header>
 
+    <!-- Search & Filter Bar -->
+    <div id="filter-bar" class="filter-bar">
+        <div class="filter-container">
+
+            <!-- Search Row -->
+            <div class="search-wrapper">
+                <input type="text" id="search-input" class="search-input"
+                    placeholder="Cari tempat, layanan, atau alamat..." data-i18n-placeholder="search_placeholder"
+                    autocomplete="off">
+                <kbd class="search-kbd" id="search-kbd" aria-hidden="true">Ctrl + K</kbd>
+            </div>
+
+            <!-- Category Pills Row -->
+            <div id="category-pills" class="category-pills">
+                <!-- Pills rendered by JavaScript -->
+            </div>
+
+            <!-- Price & Clear Row -->
+            <div class="filter-actions">
+                <div id="price-filters" class="price-filters">
+                    <!-- Price buttons rendered by JavaScript -->
+                </div>
+                <div class="settings-wrapper">
+                    <label for="dropdown-trigger" class="settings-label">
+                        <i data-lucide="settings-2" class="icon-sm"></i> <span data-i18n="show_label">Show:</span>
+                    </label>
+                    <div class="custom-dropdown" id="items-per-page-dropdown">
+                        <button class="dropdown-trigger" id="dropdown-trigger" aria-haspopup="listbox"
+                            aria-expanded="false">
+                            <span id="dropdown-selected-value">12</span>
+                            <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
+                        </button>
+                        <div class="dropdown-menu" id="dropdown-menu" role="listbox">
+                            <div class="dropdown-option active" data-value="12" role="option">12</div>
+                            <div class="dropdown-option" data-value="24" role="option">24</div>
+                            <div class="dropdown-option" data-value="36" role="option">36</div>
+                            <div class="dropdown-option" data-value="all" role="option"><span
+                                    data-i18n="show_all">All</span></div>
+                        </div>
+                    </div>
+                </div>
+                <button id="clear-filters" class="clear-filters-btn"><i data-lucide="x" class="icon-xs"></i> <span
+                        data-i18n="clear_filters">Clear Filters</span></button>
+            </div>
+
+        </div>
+    </div>
+
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="js/main.js"></script>
 

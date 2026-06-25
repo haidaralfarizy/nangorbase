@@ -111,7 +111,7 @@ function populateHeroStats() {
     const dateTimestamps = allPlaces.map(p => new Date(p.last_updated || 0).getTime());
     const latestTime = Math.max(...dateTimestamps.filter(t => !isNaN(t)));
     const latestDate = new Date(latestTime);
-    
+
     const options = { year: 'numeric', month: 'short' };
     lastUpdatedEl.textContent = latestDate.toLocaleDateString(currentLang === 'id' ? 'id-ID' : 'en-US', options);
 }
