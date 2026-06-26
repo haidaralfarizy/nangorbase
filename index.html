@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NangorBase - Jatinangor Directory</title>
     <meta name="description" content="Direktori lengkap.">
+    <!-- Note: Alpine.js v3 relies on new Function() to evaluate expressions (e.g. x-text, @click). 
+         Therefore, 'unsafe-eval' is strictly required in the script-src unless the entire 
+         application is rewritten to use the restricted CSP build (cdn.csp.min.js) and Alpine.data() exclusively. -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self';">
+
+    <!-- Preconnects -->
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
 
     <!-- Fonts: Sora (display) + Inter (body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,8 +32,21 @@
     <!-- Styles -->
     <link rel="stylesheet" href="css/main.css">
 
-    <!-- Lenis for smooth scrolling -->
-    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+    <!-- Scripts (Deferred) -->
+    <script defer src="js/config.js"></script>
+    <script defer src="js/main.js"></script>
+    <script defer src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"
+        integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed"
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"
+        integrity="sha384-PCSoOZTpbkikBEtd/+uV3WNdc676i9KUf01KOA8CnJotvlx8rRrETbDuwdjqTYvt"
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"
+        integrity="sha384-l8f0VcPi/M1iHPv8egOnY/15TDwqgbOR1anMIJWvU6nLRgZVLTLSaNqi/TOoT5Fh"
+        crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/lucide@0.378.0/dist/umd/lucide.min.js"
+        integrity="sha384-qhUDVxItfTfdldcM+OXATzmed102bu7gbQzEzi7677Xh/Swfmh1R3gajkj18PhRK"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -32,96 +54,234 @@
     <header class="hero">
         <div class="top-bar">
             <div class="glass-pill">
-                <button id="theme-toggle" class="theme-btn" aria-label="Toggle Dark Mode" onclick="toggleTheme()">
+                <button id="theme-toggle" class="theme-btn" aria-label="Toggle Dark Mode">
                     <i data-lucide="moon" class="icon-sm" id="theme-icon"></i>
                 </button>
                 <span class="lang-divider">|</span>
-                <i data-lucide="globe" class="icon-sm" id="icon-lang"
-                    style="color: rgba(255,255,255,0.8); margin-left: 4px;"></i>
-                <button id="lang-id" class="lang-btn active" onclick="setLanguage('id')">ID</button>
+                <i data-lucide="globe" class="icon-sm" id="icon-lang"></i>
+                <button id="lang-id" class="lang-btn active">ID</button>
                 <span class="lang-divider">·</span>
-                <button id="lang-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
+                <button id="lang-en" class="lang-btn">EN</button>
             </div>
         </div>
         <div class="hero-inner">
             <h1 class="hero-title">
                 <img src="img/logo.svg" class="hero-logo" alt="NangorBase">
             </h1>
-            <p class="hero-tagline" data-i18n="hero_tagline">Apapun yang kamu butuhkan di Jatinangor, dari mahasiswa,
-                untuk mahasiswa.</p>
-            <p class="hero-subtitle" data-i18n="hero_subtitle">Panduan tempat-tempat penting di sekitar kampus
-                ITB Jatinangor dan Unpad.</p>
+            <p class="hero-tagline" data-i18n="hero_tagline">—</p>
+            <p class="hero-subtitle" data-i18n="hero_subtitle">—</p>
 
             <div class="hero-stats" id="hero-stats">
                 <div class="hero-stat">
                     <span class="hero-stat-value" id="hero-listing-count">—</span>
-                    <span class="hero-stat-label" data-i18n="hero_stat_listings">Lokasi</span>
+                    <span class="hero-stat-label" data-i18n="hero_stat_listings">—</span>
                 </div>
                 <div class="hero-stat-divider"></div>
                 <div class="hero-stat">
                     <span class="hero-stat-value" id="hero-category-count">—</span>
-                    <span class="hero-stat-label" data-i18n="hero_stat_categories">Kategori</span>
+                    <span class="hero-stat-label" data-i18n="hero_stat_categories">—</span>
                 </div>
                 <div class="hero-stat-divider"></div>
                 <div class="hero-stat">
                     <span class="hero-stat-value" id="hero-last-updated">—</span>
-                    <span class="hero-stat-label" data-i18n="hero_stat_updated">Terakhir Diperbarui</span>
+                    <span class="hero-stat-label" data-i18n="hero_stat_updated">—</span>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Search & Filter Bar -->
-    <div id="filter-bar" class="filter-bar">
+    <div id="filter-bar" class="filter-bar" x-data="filterSystem()">
         <div class="filter-container">
-
             <!-- Search Row -->
-            <div class="search-wrapper">
-                <input type="text" id="search-input" class="search-input"
-                    placeholder="Cari tempat, layanan, atau alamat..." data-i18n-placeholder="search_placeholder"
-                    autocomplete="off">
+            <div class="search-wrapper" role="search">
+                <input type="text" id="search-input" class="search-input" x-model.debounce.300ms="searchQuery"
+                    :placeholder="currentPlaceholder" aria-label="Search places" autocomplete="off">
                 <kbd class="search-kbd" id="search-kbd" aria-hidden="true">Ctrl + K</kbd>
             </div>
 
             <!-- Category Pills Row -->
-            <div id="category-pills" class="category-pills">
-                <!-- Pills rendered by JavaScript -->
+            <div class="category-pills-wrapper" id="category-pills-wrapper">
+                <div id="category-pills" class="category-pills" data-lenis-prevent>
+                    <div id="category-pills-inner" class="category-pills-inner">
+                        <template x-for="(cat, key) in categories" :key="key">
+                            <button class="category-pill" :class="selectedCategories.includes(key) ? 'active' : ''"
+                                :aria-pressed="selectedCategories.includes(key).toString()"
+                                @click="toggleCategory(key)">
+                                <i :data-lucide="cat.icon" class="icon-sm"></i>
+                                <span x-text="cat.label[currentLang]"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
             </div>
 
-            <!-- Price & Clear Row -->
-            <div class="filter-actions">
-                <div id="price-filters" class="price-filters">
-                    <!-- Price buttons rendered by JavaScript -->
+            <!-- Secondary Filters Row (Zones, Operational, Budget) -->
+            <div class="secondary-filters-row">
+                <!-- Zones -->
+                <div class="custom-dropdown" x-data="{ open: false }" @click.away="open = false">
+                    <button class="dropdown-trigger" @click="open = !open" :aria-expanded="open">
+                        <i data-lucide="map-pin" class="icon-xs"></i>
+                        <span
+                            x-text="selectedZone ? selectedZone : (currentLang === 'id' ? 'Semua Area' : 'All Zones')"></span>
+                        <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
+                    </button>
+                    <div class="dropdown-menu" :class="open ? 'show' : ''">
+                        <div class="dropdown-option" :class="!selectedZone ? 'active' : ''"
+                            @click="selectedZone = null; open = false">
+                            <span x-text="currentLang === 'id' ? 'Semua Area' : 'All Zones'"></span>
+                        </div>
+                        <template x-for="zone in zones" :key="zone">
+                            <div class="dropdown-option" :class="selectedZone === zone ? 'active' : ''"
+                                @click="selectedZone = zone; open = false" x-text="zone"></div>
+                        </template>
+                    </div>
                 </div>
-                <div class="settings-wrapper">
-                    <label for="dropdown-trigger" class="settings-label">
-                        <i data-lucide="settings-2" class="icon-sm"></i> <span data-i18n="show_label">Show:</span>
-                    </label>
-                    <div class="custom-dropdown" id="items-per-page-dropdown">
-                        <button class="dropdown-trigger" id="dropdown-trigger" aria-haspopup="listbox"
-                            aria-expanded="false">
-                            <span id="dropdown-selected-value">12</span>
-                            <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
+
+                <!-- Budget -->
+                <div class="price-filters" style="display: flex; gap: 0.5rem;">
+                    <template x-for="price in [1, 2, 3]" :key="price">
+                        <button class="price-btn" :class="selectedBudget === price ? 'active' : ''"
+                            @click="selectedBudget = selectedBudget === price ? null : price"
+                            x-text="getPriceLabel(price)">
                         </button>
-                        <div class="dropdown-menu" id="dropdown-menu" role="listbox">
-                            <div class="dropdown-option active" data-value="12" role="option">12</div>
-                            <div class="dropdown-option" data-value="24" role="option">24</div>
-                            <div class="dropdown-option" data-value="36" role="option">36</div>
-                            <div class="dropdown-option" data-value="all" role="option"><span
-                                    data-i18n="show_all">All</span></div>
+                    </template>
+                </div>
+
+                <!-- Operational Status -->
+                <button class="open-now-btn" :class="isOpenNow ? 'active' : ''" @click="isOpenNow = !isOpenNow">
+                    <i data-lucide="clock" class="icon-xs"></i>
+                    <span x-text="currentLang === 'id' ? 'Buka Sekarang' : 'Open Now'"></span>
+                </button>
+                <button class="open-now-btn" :class="is24Hours ? 'active' : ''" @click="is24Hours = !is24Hours">
+                    <i data-lucide="moon" class="icon-xs"></i>
+                    <span x-text="currentLang === 'id' ? '24 Jam' : '24 Hours'"></span>
+                </button>
+            </div>
+
+
+            <!-- Control Row -->
+            <div class="filter-actions">
+
+                <div class="filter-actions-inner">
+                    <!-- Sort By -->
+                    <div class="settings-wrapper">
+                        <label class="settings-label">
+                            <i data-lucide="arrow-down-up" class="icon-sm"></i> <span
+                                x-text="currentLang === 'id' ? 'Urutkan:' : 'Sort by:'"></span>
+                        </label>
+                        <div class="custom-dropdown" x-data="{ open: false }" @click.away="open = false">
+                            <button class="dropdown-trigger" @click="open = !open" :aria-expanded="open">
+                                <span x-text="getSortLabel(sortBy)"></span>
+                                <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
+                            </button>
+                            <div class="dropdown-menu" :class="open ? 'show' : ''">
+                                <div class="dropdown-option" :class="sortBy === 'default' ? 'active' : ''"
+                                    @click="sortBy = 'default'; open = false"
+                                    x-text="currentLang === 'id' ? 'Relevan' : 'Default'"></div>
+                                <div class="dropdown-option" :class="sortBy === 'cheapest' ? 'active' : ''"
+                                    @click="sortBy = 'cheapest'; open = false"
+                                    x-text="currentLang === 'id' ? 'Termurah' : 'Cheapest'"></div>
+                                <div class="dropdown-option" :class="sortBy === 'highest_rated' ? 'active' : ''"
+                                    @click="sortBy = 'highest_rated'; open = false"
+                                    x-text="currentLang === 'id' ? 'Rating' : 'Rating'"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Limit -->
+                    <div class="settings-wrapper">
+                        <label class="settings-label">
+                            <i data-lucide="settings-2" class="icon-sm"></i> <span
+                                x-text="currentLang === 'id' ? 'Tampilkan:' : 'Show:'"></span>
+                        </label>
+                        <div class="custom-dropdown" x-data="{ open: false }" @click.away="open = false">
+                            <button class="dropdown-trigger" @click="open = !open" :aria-expanded="open">
+                                <span
+                                    x-text="limit === 'all' ? (currentLang === 'id' ? 'Semua' : 'All') : limit"></span>
+                                <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
+                            </button>
+                            <div class="dropdown-menu" :class="open ? 'show' : ''">
+                                <template x-for="val in [12, 24, 36, 'all']" :key="val">
+                                    <div class="dropdown-option" :class="limit === val ? 'active' : ''"
+                                        @click="limit = val; open = false">
+                                        <span
+                                            x-text="val === 'all' ? (currentLang === 'id' ? 'Semua' : 'All') : val"></span>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <button id="clear-filters" class="clear-filters-btn"><i data-lucide="x" class="icon-xs"></i> <span
-                        data-i18n="clear_filters">Clear Filters</span></button>
-            </div>
 
+                <button class="clear-filters-btn" :class="hasActiveFilters ? 'is-visible' : ''" @click="clearFilters()">
+                    <i data-lucide="x" class="icon-xs"></i>
+                    <span x-text="currentLang === 'id' ? 'Hapus Filter' : 'Clear Filters'"></span>
+                </button>
+            </div>
         </div>
     </div>
+    <!-- Cards Placeholder -->
+    <div class="cards-placeholder"></div>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="js/main.js"></script>
-
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <!-- Column 1: Directory Stats -->
+            <div class="footer-col">
+                <h4 class="footer-heading" data-i18n="footer_heading_stats">Statistik Direktori</h4>
+                <div class="footer-stats-row">
+                    <div class="footer-stat-item">
+                        <span class="footer-stat-value" id="footer-listing-count">—</span>
+                        <span class="footer-stat-label" data-i18n="footer_stat_listings">Lokasi</span>
+                    </div>
+                    <div class="footer-stat-item">
+                        <span class="footer-stat-value" id="footer-category-count">—</span>
+                        <span class="footer-stat-label" data-i18n="footer_stat_categories">Kategori</span>
+                    </div>
+                </div>
+                <p class="footer-updated-text">
+                    <span data-i18n="footer_updated">Terakhir diperbarui:</span>
+                    <strong id="footer-last-updated"></strong>
+                </p>
+            </div>
+            <!-- Column 2: Contribute -->
+            <div class="footer-col">
+                <h4 class="footer-heading" data-i18n="footer_heading_contribute">Kontribusi</h4>
+                <ul class="footer-link-list">
+                    <li>
+                        <a href="https://github.com/haidaralfarizy/jatinangor" target="_blank" rel="noopener noreferrer"
+                            class="footer-link">
+                            <i data-lucide="github" class="icon-sm"></i>
+                            <span data-i18n="footer_github">Lihat di GitHub</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/haidaralfarizy/jatinangor/issues/new?labels=suggestion&title=Tambah+Lokasi%3A+"
+                            target="_blank" rel="noopener noreferrer" class="footer-link">
+                            <i data-lucide="plus-circle" class="icon-sm"></i>
+                            <span data-i18n="footer_submit_link">Tambahkan Lokasi Baru</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Column 3: About -->
+            <div class="footer-col">
+                <h4 class="footer-heading" data-i18n="footer_heading_about">Tentang</h4>
+                <p class="footer-about-text" data-i18n="footer_about_desc">Proyek open-source oleh mahasiswa STEI-K ITB
+                    untuk membantu navigasi kehidupan kampus di Jatinangor.</p>
+                <a href="https://github.com/haidaralfarizy" target="_blank" rel="noopener noreferrer"
+                    class="footer-credits" style="text-decoration: none;">
+                    <span data-i18n="footer_credits">Dibuat oleh Haidar</span>
+                    <i data-lucide="graduation-cap" class="icon-sm"></i>
+                </a>
+                <button class="footer-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+                    <i data-lucide="arrow-up" class="icon-sm"></i>
+                    <span data-i18n="footer_back_top">Kembali ke Atas</span>
+                </button>
+            </div>
+        </div>
+    </footer>
 </body>
 
 </html>

@@ -13,9 +13,16 @@
         "maps_url": "https://maps.google.com/?q=Warteg+Ibu+Sari+Jatinangor",
         "price_range": 1,
         "description": "Warteg andalan mahasiswa dengan pilihan lauk yang sangat beragam dan harga bersahabat.",
-        "hours": "Sen–Sab 06.00–21.00",
+        "hours": {
+            "is_24_hours": false,
+            "open": "06:00",
+            "close": "21:00"
+        },
         "phone": "0812-2345-6789",
-        "last_updated": "2026-06-01"
+        "last_updated": "2026-06-01",
+        "zone": "Jatos / Raya Jatinangor",
+        "rating": 4.5,
+        "facilities": []
     },
     {
         "id": "food-cafe-001",
@@ -24,15 +31,28 @@
         "tags": [
             "Kopi",
             "Wifi Ngebut",
-            "Nugas"
+            "Nugas",
+            "wfc"
         ],
         "address": "Jl. Ciseke Besar No. 45",
         "maps_url": "https://maps.google.com/?q=Plumeria+Cafe+Jatinangor",
         "price_range": 2,
         "description": "Tempat nugas nyaman dengan kopi enak. Colokan banyak dan wifi kencang.",
-        "hours": "Setiap Hari 10.00–23.00",
+        "hours": {
+            "is_24_hours": false,
+            "open": "10:00",
+            "close": "23:00"
+        },
         "featured": true,
-        "last_updated": "2026-06-15"
+        "last_updated": "2026-06-15",
+        "zone": "Ciseke",
+        "rating": 4.8,
+        "facilities": [
+            "wifi",
+            "stopkontak",
+            "smoking"
+        ],
+        "phone": null
     },
     {
         "id": "printing-001",
@@ -48,6 +68,12 @@
         "price_range": 1,
         "description": "Buka 24 jam saat musim ujian. Melayani jilid skripsi kilat.",
         "phone": "0856-7890-1234",
-        "last_updated": "2025-10-01"
+        "last_updated": "2025-10-01",
+        "hours": {
+            "is_24_hours": true
+        },
+        "zone": "Jalan Sayang",
+        "rating": 4.2,
+        "facilities": []
     }
 ]
