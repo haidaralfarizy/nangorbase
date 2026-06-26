@@ -28,7 +28,7 @@ new_filter_bar = """<div id="filter-bar" class="filter-bar" x-data="filterSystem
 
             <!-- Category Pills Row -->
             <div class="category-pills-wrapper" id="category-pills-wrapper">
-                <div id="category-pills" class="category-pills">
+                <div id="category-pills" class="category-pills" data-lenis-prevent>
                     <div id="category-pills-inner" class="category-pills-inner">
                         <template x-for="(cat, key) in categories" :key="key">
                             <button class="category-pill" 

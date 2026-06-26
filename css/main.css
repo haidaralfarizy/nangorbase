@@ -233,32 +233,41 @@ i[data-lucide] {
     z-index: 0;
 }
 
-.hero::before {
-    content: '';
+.hero-grid-wrapper {
     position: absolute;
     inset: 0;
     z-index: var(--z-negative);
-    background-image:
-        linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-    background-size: 2.5rem 2.5rem, 2.5rem 2.5rem;
+    pointer-events: none;
     -webkit-mask-image: radial-gradient(ellipse 120% 100% at 50% 0%, black 20%, transparent 90%);
     mask-image: radial-gradient(ellipse 120% 100% at 50% 0%, black 20%, transparent 90%);
 }
 
+.hero-grid {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 2.5rem 2.5rem, 2.5rem 2.5rem;
+    will-change: transform;
+}
+
 @media (prefers-reduced-motion: no-preference) {
-    .hero::before {
+    .hero-grid {
         animation: moveGrid 10s linear infinite;
     }
 }
 
 @keyframes moveGrid {
     0% {
-        background-position: 0 0, 0 0;
+        transform: translate(0, 0);
     }
-
     100% {
-        background-position: 12.5rem -12.5rem, 12.5rem -12.5rem;
+        /* Move diagonally by exactly 5 grid units (12.5rem) to seamlessly loop */
+        transform: translate(12.5rem, -12.5rem);
     }
 }
 
@@ -893,7 +902,43 @@ i[data-lucide] {
 .cards-placeholder {
     width: 100%;
     min-height: 500px;
+    max-height: 80vh; /* Restrict height to enable internal scrolling */
+    overflow-y: auto; /* Enable vertical scrollbar */
     background: transparent;
+    scroll-behavior: smooth;
+    
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #CBD5E1 transparent;
+}
+
+/* WebKit Custom Scrollbar for Content Section */
+.cards-placeholder::-webkit-scrollbar {
+    width: 8px;
+}
+
+.cards-placeholder::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.cards-placeholder::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #94A3B8, #64748B);
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .cards-placeholder::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #475569, #334155);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.cards-placeholder::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, var(--itb-blue), #1E3A8A);
+}
+
+[data-theme="dark"] .cards-placeholder::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, var(--itb-gold), #B45309);
 }
 
 /* --------------------------------------------------------------------------
