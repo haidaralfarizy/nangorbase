@@ -187,6 +187,55 @@
                 requestAnimationFrame(rafGlobal);
             }
             requestAnimationFrame(rafGlobal);
+
+            // Premium Scroll Effects
+            const heroInner = document.querySelector('.hero-inner');
+            const filterContainer = document.querySelector('.filter-container');
+            const siteFooter = document.querySelector('.site-footer');
+
+            let ticking = false;
+            globalLenis.on('scroll', (e) => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        const scrollY = e.scroll;
+                        const velocity = e.velocity;
+                        const maxScroll = e.limit;
+
+                        // 1. Hero Parallax & Fade
+                        if (heroInner && scrollY < window.innerHeight) {
+                            const opacity = Math.max(0, 1 - (scrollY / (window.innerHeight * 0.75)));
+                            const translateY = scrollY * 0.4; // 40% slower than scroll
+                            heroInner.style.transform = `translateY(${translateY}px)`;
+                            heroInner.style.opacity = opacity;
+                        }
+
+                        // 2. Filter Bar Velocity Scale (Squish effect)
+                        if (filterContainer) {
+                            // Max velocity cap to prevent extreme scaling
+                            const maxVelocity = 40;
+                            const normalizedVel = Math.min(Math.abs(velocity), maxVelocity);
+                            // Scale down to 98% at max velocity
+                            const scale = 1 - (normalizedVel / maxVelocity) * 0.02; 
+                            filterContainer.style.transform = `scale(${scale})`;
+                        }
+
+                        // 3. Footer Reverse Parallax Reveal
+                        if (siteFooter && maxScroll > 0) {
+                            const footerDistance = maxScroll - scrollY;
+                            const footerHeight = siteFooter.offsetHeight;
+                            if (footerDistance < window.innerHeight) {
+                                // Parallax strength: 50px offset initially, smoothly hitting 0px
+                                const progress = Math.max(0, 1 - (footerDistance / footerHeight)); 
+                                const translateY = (1 - progress) * 50; 
+                                siteFooter.style.transform = `translateY(${translateY}px)`;
+                            }
+                        }
+                        
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
         }
     });
 

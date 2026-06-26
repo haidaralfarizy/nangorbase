@@ -276,6 +276,7 @@ i[data-lucide] {
     max-width: 56.25rem;
     margin: 0 auto;
     z-index: 2;
+    will-change: transform, opacity;
 }
 
 .hero-title {
@@ -401,6 +402,8 @@ i[data-lucide] {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    will-change: transform;
+    transform-origin: top center;
 }
 
 /* Search Recess */
@@ -958,6 +961,7 @@ i[data-lucide] {
     z-index: var(--z-dropdown);
     color: var(--text-secondary);
     margin-top: -2.5rem;
+    will-change: transform;
 }
 
 [data-theme="dark"] .site-footer {
@@ -1057,15 +1061,6 @@ i[data-lucide] {
     font-size: 14px;
 }
 
-.footer-credits {
-    font-family: var(--font-display);
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
 
 .footer-back-top {
     display: inline-flex;
