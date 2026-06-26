@@ -1,6 +1,11 @@
+import os
 import re
 
-with open("css/main.css", "r") as f:
+# Resolve paths relative to the script's parent directory (project root)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+css_path = os.path.join(BASE_DIR, "css", "main.css")
+
+with open(css_path, "r") as f:
     content = f.read()
 
 # Add z-index to :root
@@ -35,5 +40,5 @@ media_pattern = re.compile(r'@media\s*\([^\)]+\)\s*\{[^\}]*\}[^\}]*\}', re.DOTAL
 # It's safer to just let the developer know they are already mostly grouped, or just run a simple extract if we can.
 # Given time constraints, I will do a manual extraction if they exist.
 
-with open("css/main.css", "w") as f:
+with open(css_path, "w") as f:
     f.write(content)

@@ -1,6 +1,11 @@
+import os
 import json
 
-with open("data/places.json", "r") as f:
+# Resolve paths relative to the script's parent directory (project root)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+places_path = os.path.join(BASE_DIR, "data", "places.json")
+
+with open(places_path, "r") as f:
     places = json.load(f)
 
 for p in places:
@@ -34,5 +39,5 @@ for p in places:
 
         p["hours"] = new_hours
 
-with open("data/places.json", "w") as f:
+with open(places_path, "w") as f:
     json.dump(places, f, indent=4)

@@ -1,6 +1,11 @@
+import os
 import re
 
-with open("index.html", "r") as f:
+# Resolve paths relative to the script's parent directory (project root)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+index_path = os.path.join(BASE_DIR, "index.html")
+
+with open(index_path, "r") as f:
     content = f.read()
 
 filter_bar_start = content.find('<div id="filter-bar" class="filter-bar">')
@@ -149,7 +154,7 @@ script_injection = """
     <script src="https://unpkg.com/lucide@latest"></script>"""
 new_content = new_content.replace('<script src="https://unpkg.com/lucide@latest"></script>', script_injection)
 
-with open("index.html", "w") as f:
+with open(index_path, "w") as f:
     f.write(new_content)
 
 print("index.html patched")

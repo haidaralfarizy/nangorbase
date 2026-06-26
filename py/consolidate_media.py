@@ -1,6 +1,11 @@
+import os
 import re
 
-with open("css/main.css", "r") as f:
+# Resolve paths relative to the script's parent directory (project root)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+css_path = os.path.join(BASE_DIR, "css", "main.css")
+
+with open(css_path, "r") as f:
     content = f.read()
 
 def extract_media_queries(text):
@@ -39,7 +44,7 @@ if queries:
     combined_media += "}\n"
     new_text = new_text.strip() + "\n" + combined_media
 
-with open("css/main.css", "w") as f:
+with open(css_path, "w") as f:
     f.write(new_text)
 
 print("Media queries consolidated.")

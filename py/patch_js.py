@@ -1,6 +1,11 @@
+import os
 import re
 
-with open("js/main.js", "r") as f:
+# Resolve paths relative to the script's parent directory (project root)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+js_path = os.path.join(BASE_DIR, "js", "main.js")
+
+with open(js_path, "r") as f:
     content = f.read()
 
 # Replace CATEGORIES
@@ -300,7 +305,7 @@ document.addEventListener('keydown', (e) => {
 content = re.sub(dom_ready_pattern, new_dom_ready, content, flags=re.DOTALL)
 content += "\n" + alpine_init
 
-with open("js/main.js", "w") as f:
+with open(js_path, "w") as f:
     f.write(content)
 
 print("js/main.js patched")
