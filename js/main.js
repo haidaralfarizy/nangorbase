@@ -469,6 +469,39 @@
 
         window.lenis = lenis;
 
+        // Subtle parallax effects for big site elements
+        const heroInner = document.querySelector('.hero-inner');
+        const heroGridWrapper = document.querySelector('.hero-grid-wrapper');
+        const filterBar = document.querySelector('.filter-bar');
+
+        const siteFooter = document.querySelector('.site-footer');
+        const footerGrid = document.querySelector('.footer-grid');
+
+        lenis.on('scroll', (e) => {
+            const scrollY = e.animatedScroll;
+            if (heroInner) {
+                heroInner.style.transform = `translateY(${scrollY * 0.35}px)`;
+                // Fade out content as we scroll down to create a blue fade effect (longer fade)
+                heroInner.style.opacity = Math.max(0, 1 - (scrollY / 650));
+            }
+            if (heroGridWrapper) heroGridWrapper.style.transform = `translateY(${scrollY * 0.15}px)`;
+            if (filterBar) filterBar.style.transform = `translateY(${-scrollY * 0.03}px)`;
+
+            // Footer parallax
+            if (siteFooter && footerGrid) {
+                const footerRect = siteFooter.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                // Check if footer is in viewport
+                if (footerRect.top < windowHeight) {
+                    const visibleAmount = windowHeight - footerRect.top;
+                    const progress = Math.max(0, Math.min(1, visibleAmount / footerRect.height));
+                    // Start pushed down by 60px and slide up to 0 as it becomes fully visible
+                    footerGrid.style.transform = `translateY(${(1 - progress) * 60}px)`;
+                    footerGrid.style.opacity = progress * 1.5; // Slight fade in
+                }
+            }
+        });
+
         // Double Lenis for horizontal pills
         const slider = document.getElementById('category-pills');
         const lenisPills = slider ? new Lenis({
