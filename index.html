@@ -36,7 +36,7 @@
     <!-- Scripts (Deferred) -->
     <!-- 1. Config -->
     <script defer src="js/config.js"></script>
-    
+
     <!-- 2. Dependencies required by main.js synchronously -->
     <script defer src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"
         integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed"
@@ -52,7 +52,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"
         integrity="sha384-l8f0VcPi/M1iHPv8egOnY/15TDwqgbOR1anMIJWvU6nLRgZVLTLSaNqi/TOoT5Fh"
         crossorigin="anonymous"></script>
-        
+
     <!-- 5. Icons -->
     <script defer src="https://unpkg.com/lucide@0.378.0/dist/umd/lucide.min.js"
         integrity="sha384-qhUDVxItfTfdldcM+OXATzmed102bu7gbQzEzi7677Xh/Swfmh1R3gajkj18PhRK"
@@ -111,8 +111,8 @@
                 <!-- Search Row -->
                 <div class="search-wrapper" role="search">
                     <input type="text" id="search-input" class="search-input" x-model.debounce.300ms="searchQuery"
-                        @keydown.escape="$el.blur()"
-                        :placeholder="currentPlaceholder" aria-label="Search places" autocomplete="off">
+                        @keydown.escape="$el.blur()" :placeholder="currentPlaceholder" aria-label="Search places"
+                        autocomplete="off">
                     <kbd class="search-kbd" id="search-kbd" aria-hidden="true">Ctrl + K</kbd>
                 </div>
 
@@ -241,17 +241,20 @@
                             </label>
                             <div class="custom-dropdown" x-data="{ open: false }" @click.away="open = false">
                                 <button class="dropdown-trigger" @click="open = !open" :aria-expanded="open">
-                                    <span x-text="viewMode === 'list' ? TRANSLATIONS[currentLang].view_list : TRANSLATIONS[currentLang].view_grid"></span>
+                                    <span
+                                        x-text="viewMode === 'list' ? TRANSLATIONS[currentLang].view_list : TRANSLATIONS[currentLang].view_grid"></span>
                                     <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
                                 </button>
                                 <div class="dropdown-menu" :class="open ? 'show' : ''">
                                     <div class="dropdown-option" :class="viewMode === 'grid' ? 'active' : ''"
-                                        @click="viewMode = 'grid'; open = false" style="display: flex; align-items: center; gap: 0.5rem;">
+                                        @click="viewMode = 'grid'; open = false"
+                                        style="display: flex; align-items: center; gap: 0.5rem;">
                                         <i data-lucide="layout-grid" class="icon-xs"></i>
                                         <span x-text="TRANSLATIONS[currentLang].view_grid"></span>
                                     </div>
                                     <div class="dropdown-option" :class="viewMode === 'list' ? 'active' : ''"
-                                        @click="viewMode = 'list'; open = false" style="display: flex; align-items: center; gap: 0.5rem;">
+                                        @click="viewMode = 'list'; open = false"
+                                        style="display: flex; align-items: center; gap: 0.5rem;">
                                         <i data-lucide="list" class="icon-xs"></i>
                                         <span x-text="TRANSLATIONS[currentLang].view_list"></span>
                                     </div>
@@ -278,7 +281,8 @@
                     :class="place.featured ? 'featured' : ''"
                     :style="{ transitionDelay: (index > 12 ? 12 : index) * 0.05 + 's' }"
                     x-transition:leave="card-leave-active" x-transition:leave-end="card-leave-to">
-                    <a class="card-link-overlay" :href="place.maps_url" target="_blank" rel="noopener noreferrer" :aria-label="'Buka ' + place.name + ' di Google Maps'"></a>
+                    <a class="card-link-overlay" :href="place.maps_url" target="_blank" rel="noopener noreferrer"
+                        :aria-label="'Buka ' + place.name + ' di Google Maps'"></a>
 
                     <div class="card-hero">
                         <template x-if="place.image_url">
@@ -291,8 +295,8 @@
                                     style="width: 1.25rem; height: 1.25rem; opacity: 0.9; color: white; flex-shrink: 0; margin-top: 0.125rem;"></i>
                                 <h3 class="card-name" x-text="place.name"></h3>
                             </div>
-                            <div class="card-date" x-show="place.last_updated"
-                                x-text="formatDate(place.last_updated)"></div>
+                            <div class="card-date" x-show="place.last_updated" x-text="formatDate(place.last_updated)">
+                            </div>
                         </div>
                     </div>
 
@@ -307,7 +311,8 @@
 
                         <!-- Description -->
                         <p class="card-description" x-show="place.description && place.description.length > 0"
-                            x-html="Array.isArray(place.description) ? place.description.map(d => String(d).replace(/</g, '&lt;')).join('<span class=\'card-address-separator\' style=\'margin: 0 0.35rem;\'>•</span>') : place.description"></p>
+                            x-html="Array.isArray(place.description) ? place.description.map(d => String(d).replace(/</g, '&lt;')).join('<span class=\'card-address-separator\' style=\'margin: 0 0.35rem;\'>•</span>') : place.description">
+                        </p>
 
 
                         <!-- Footer -->
@@ -377,7 +382,7 @@
                 </p>
                 <p
                     style="font-size: 0.75rem; margin-top: 1rem; color: var(--text-secondary); opacity: 0.7; font-weight: 600;">
-                    v1.0.0</p>
+                    v1.3.3</p>
             </div>
             <!-- Column 2: Contribute -->
             <div class="footer-col">
@@ -409,7 +414,8 @@
                     <i data-lucide="graduation-cap" class="icon-sm"></i>
                     <span data-i18n="footer_credits">Dibuat oleh Haidar</span>
                 </a>
-                <button class="footer-back-top" onclick="window.lenis ? window.lenis.scrollTo(0) : window.scrollTo({top:0,behavior:'smooth'})">
+                <button class="footer-back-top"
+                    onclick="window.lenis ? window.lenis.scrollTo(0) : window.scrollTo({top:0,behavior:'smooth'})">
                     <i data-lucide="arrow-up" class="icon-sm"></i>
                     <span data-i18n="footer_back_top">Kembali ke Atas</span>
                 </button>
