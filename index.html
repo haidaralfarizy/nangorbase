@@ -275,8 +275,10 @@
             x-effect="filteredPlaces; $nextTick(() => { if(window.lucide) lucide.createIcons({root: $el}) })">
             <template x-for="(place, index) in filteredPlaces" :key="place.id">
                 <div class="place-card" x-init="$nextTick(() => $el.classList.add('card-visible'))"
+                    :class="place.featured ? 'featured' : ''"
                     :style="{ transitionDelay: (index > 12 ? 12 : index) * 0.05 + 's' }"
                     x-transition:leave="card-leave-active" x-transition:leave-end="card-leave-to">
+                    <a class="card-link-overlay" :href="place.maps_url" target="_blank" rel="noopener noreferrer" :aria-label="'Buka ' + place.name + ' di Google Maps'"></a>
 
                     <div class="card-hero">
                         <template x-if="place.image_url">

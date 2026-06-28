@@ -1179,6 +1179,13 @@ i[data-lucide] {
     letter-spacing: 0.02em;
 }
 
+.card-link-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: block;
+}
+
 .card-maps-link {
     display: inline-flex;
     align-items: center;
@@ -1189,6 +1196,8 @@ i[data-lucide] {
     transition: all 0.2s ease;
     text-decoration: none;
     cursor: pointer;
+    position: relative;
+    z-index: 20;
 }
 
 .card-maps-link:hover {
