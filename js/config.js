@@ -20,7 +20,7 @@ const TRANSLATIONS = Object.freeze({
         "clear_filters": "Hapus Filter",
         "show_label": "Tampilkan:",
         "show_all": "Semua",
-        "footer_heading_stats": "Statistik Direktori",
+        "footer_heading_stats": "Statistik",
         "footer_stat_listings": "Lokasi",
         "footer_stat_categories": "Kategori",
         "footer_updated": "Terakhir diperbarui:",
@@ -37,6 +37,8 @@ const TRANSLATIONS = Object.freeze({
         "sort_default": "Relevan",
         "sort_cheapest": "Termurah",
         "sort_rating": "Rating",
+        "sort_az": "A-Z",
+        "sort_za": "Z-A",
         "status_open": "Buka",
         "status_closed": "Tutup",
         "empty_title": "Tidak ada tempat ditemukan",
@@ -45,7 +47,10 @@ const TRANSLATIONS = Object.freeze({
         "count_showing": "Menampilkan",
         "count_places": "tempat",
         "count_of": "dari",
-        "card_maps_link": "Buka di Maps"
+        "card_maps_link": "Buka di Maps",
+        "view_label": "Tampilan:",
+        "view_grid": "Grid",
+        "view_list": "List"
     }),
     en: Object.freeze({
         "hero_tagline": "Everything you need in Jatinangor, by students, for students.",
@@ -64,7 +69,7 @@ const TRANSLATIONS = Object.freeze({
         "clear_filters": "Clear Filters",
         "show_label": "Show:",
         "show_all": "All",
-        "footer_heading_stats": "Directory Stats",
+        "footer_heading_stats": "Statistics",
         "footer_stat_listings": "Places",
         "footer_stat_categories": "Categories",
         "footer_updated": "Last updated:",
@@ -72,7 +77,7 @@ const TRANSLATIONS = Object.freeze({
         "footer_github": "View on GitHub",
         "footer_submit_link": "Submit a New Place",
         "footer_heading_about": "About",
-        "footer_about_desc": "An open-source project by ITB STEI-K students to help navigate campus life in Jatinangor.",
+        "footer_about_desc": "An open-source project by an ITB STEI-K student to help navigate campus life in Jatinangor.",
         "footer_credits": "Built by Haidar",
         "footer_back_top": "Back to Top",
         "filter_all_zones": "All Zones",
@@ -81,6 +86,8 @@ const TRANSLATIONS = Object.freeze({
         "sort_default": "Default",
         "sort_cheapest": "Cheapest",
         "sort_rating": "Rating",
+        "sort_az": "A-Z",
+        "sort_za": "Z-A",
         "status_open": "Open",
         "status_closed": "Closed",
         "empty_title": "No places found",
@@ -89,7 +96,10 @@ const TRANSLATIONS = Object.freeze({
         "count_showing": "Showing",
         "count_places": "places",
         "count_of": "of",
-        "card_maps_link": "Open in Maps"
+        "card_maps_link": "Open in Maps",
+        "view_label": "View:",
+        "view_grid": "Grid",
+        "view_list": "List"
     })
 });
 
@@ -101,7 +111,7 @@ const CATEGORIES = Object.freeze({
     'printing': Object.freeze({ label: Object.freeze({ en: 'Printing & Photocopy', id: 'Fotokopi & Print' }), icon: 'printer' }),
     'stationery': Object.freeze({ label: Object.freeze({ en: 'Stationery & Supplies', id: 'Alat Tulis (ATK)' }), icon: 'pencil' }),
     'daily-needs': Object.freeze({ label: Object.freeze({ en: 'Daily Needs', id: 'Kebutuhan Harian' }), icon: 'shopping-basket' }),
-    'services': Object.freeze({ label: Object.freeze({ en: 'Services', id: 'Servis' }), icon: 'wrench' })
+    'boarding': Object.freeze({ label: Object.freeze({ en: 'Boarding Houses', id: 'Kos-Kosan' }), icon: 'home' })
 });
 
 window.TRANSLATIONS = TRANSLATIONS;

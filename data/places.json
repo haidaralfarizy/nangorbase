@@ -1,76 +1,74 @@
 [
     {
-        "id": "food-cheap-001",
-        "name": "Altan's Sex Workshop",
-        "category": "food-cheap",
-        "tags": [
-            "Gay",
-            "Orgy",
-            "Nigger Sex"
+        "id": "boarding-001",
+        "name": "Rumah Kacapiring",
+        "category": "boarding",
+        "address": "Jl. Kp. Geulis No. 21",
+        "zone": "Cikeruh",
+        "maps_url": "https://maps.app.goo.gl/jQCPCLPV3ywaS4ZCA",
+        "price_range": 3,
+        "description": [
+            "Putra",
+            "Wi-Fi",
+            "Kamar mandi pribadi"
         ],
-        "address": "Jl. Raya Jatinangor No. 69",
-        "zone": "Jatos",
-        "maps_url": "https://maps.google.com/?q=Warteg+Ibu+Sari+Jatinangor",
-        "price_range": 1,
-        "description": "Tempat andalan mahasiswa untuk melepas penat.",
         "hours": {
             "is_24_hours": false,
             "open": "06:00",
-            "close": "19:00"
+            "close": "21:00"
         },
-        "phone": "0812-2345-6789",
-        "rating": 4.5,
-        "image_url": null,
-        "last_updated": "2026-06-01",
+        "phone": "0811-2103-104",
+        "rating": 4.7,
+        "image_url": "data/img/boarding-001.webp",
+        "last_updated": "2026-06-27",
         "featured": false
     },
     {
-        "id": "food-cafe-001",
-        "name": "Cafe 123",
-        "category": "food-cafe-wifi",
-        "tags": [
-            "Kopi",
-            "Wifi Ngebut",
-            "Nugas",
-            "wfc"
+        "id": "boarding-002",
+        "name": "Rumah Kenanga",
+        "category": "boarding",
+        "address": "Jl. Kp. Geulis No. 20",
+        "zone": "Cikeruh",
+        "maps_url": "https://maps.app.goo.gl/WjghX53xp9NFdnfL8",
+        "price_range": 3,
+        "description": [
+            "Putra",
+            "Wi-Fi",
+            "Parkir luas",
+            "Kamar mandi pribadi"
         ],
-        "address": "Jl. Ciseke Besar No. 45",
-        "zone": "Ciseke",
-        "maps_url": "https://maps.google.com/?q=Plumeria+Cafe+Jatinangor",
-        "price_range": 2,
-        "description": "alhamdulillah",
         "hours": {
             "is_24_hours": false,
-            "open": "10:00",
-            "close": "23:00"
+            "open": "06:00",
+            "close": "21:00"
         },
-        "phone": null,
-        "rating": 4.8,
-        "image_url": null,
-        "last_updated": "2026-06-15",
+        "phone": "0877-2211-9959",
+        "rating": 5.0,
+        "image_url": "data/img/boarding-002.webp",
+        "last_updated": "2026-06-26",
         "featured": true
     },
     {
-        "id": "printing-001",
-        "name": "KDMP",
-        "category": "printing",
-        "tags": [
-            "Print Warna",
-            "Hardcover",
-            "Skripsi"
-        ],
-        "address": "Rumah Kenanga",
-        "zone": "Jalan Sayang",
+        "id": "boarding-003",
+        "name": "Pondok Reiza",
+        "category": "boarding",
+        "address": "Jl. Raya Nangor No. 146",
+        "zone": "Cikeruh",
         "maps_url": "https://maps.google.com/?q=Tiara+Fotokopi",
-        "price_range": 1,
-        "description": "HIDUP JOKOWI",
+        "price_range": 3,
+        "description": [
+            "Putra",
+            "Wi-Fi",
+            "Dapur",
+            "Kamar mandi pribadi"
+        ],
         "hours": {
             "is_24_hours": true
         },
         "phone": "0856-7890-1234",
-        "rating": 4.2,
-        "image_url": null,
-        "last_updated": "2025-10-01",
+        "rating": 3.2,
+        "image_url": "data/img/boarding-003.webp",
+        "last_updated": "2026-06-26",
         "featured": false
     }
 ]

@@ -212,7 +212,7 @@
             _placeholderIndex: 0,
             hasError: false,
             categories: CATEGORIES,
-            zones: ['Ciseke', 'GKPN', 'Jalan Sayang', 'Jatos', 'Hegarmanah'],
+            zones: ['Ciseke', 'Cikeruh', 'Jalan Sayang'],
             searchQuery: '',
             selectedCategories: [],
             selectedBudget: null,
@@ -221,6 +221,7 @@
             selectedZone: null,
             sortBy: 'default',
             limit: 12,
+            viewMode: localStorage.getItem('viewMode') || 'grid',
             fuse: null,
             places: [],
 
@@ -241,7 +242,7 @@
 
                 // Setup Fuse options
                 const options = {
-                    keys: ['name', 'tags', 'category', 'description'],
+                    keys: ['name', 'category', 'description'],
                     threshold: 0.3
                 };
                 this.fuse = new Fuse(this.places, options);
@@ -260,6 +261,10 @@
                 this.$watch('selectedZone', () => this.refreshIcons());
                 this.$watch('sortBy', () => this.refreshIcons());
                 this.$watch('limit', () => this.refreshIcons());
+                this.$watch('viewMode', (value) => {
+                    localStorage.setItem('viewMode', value);
+                    this.refreshIcons();
+                });
 
                 this.$nextTick(() => {
                     this.initDragScroll();
@@ -268,7 +273,7 @@
 
             refreshIcons() {
                 this.$nextTick(() => {
-                    if (window.lucide) lucide.createIcons({root: this.$root});
+                    if (window.lucide) lucide.createIcons({ root: this.$root });
                 });
             },
 
@@ -289,8 +294,8 @@
                     results = this.fuse.search(this.searchQuery).map(res => res.item);
                 }
 
-                const nowWIB = this.isOpenNow || this.sortBy === 'default' /* if needed */ 
-                    ? new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" })) 
+                const nowWIB = this.isOpenNow || this.sortBy === 'default' /* if needed */
+                    ? new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }))
                     : null;
 
                 results = results.filter(place => {
@@ -306,6 +311,10 @@
                     results.sort((a, b) => (a.price_range || 3) - (b.price_range || 3));
                 } else if (this.sortBy === 'highest_rated') {
                     results.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                } else if (this.sortBy === 'alphabetical_asc') {
+                    results.sort((a, b) => a.name.localeCompare(b.name));
+                } else if (this.sortBy === 'alphabetical_desc') {
+                    results.sort((a, b) => b.name.localeCompare(a.name));
                 }
 
                 if (this.limit !== 'all') {
@@ -367,12 +376,23 @@
                 return isPlaceOpenNow(place);
             },
 
+            formatDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = String(date.getFullYear()).slice(-2);
+                return `${day}/${month}/${year}`;
+            },
+
             getSortLabel(sortValue) {
                 if (!window.TRANSLATIONS) return '';
                 const t = window.TRANSLATIONS[this.currentLang];
                 if (sortValue === 'default') return t.sort_default;
                 if (sortValue === 'cheapest') return t.sort_cheapest;
                 if (sortValue === 'highest_rated') return t.sort_rating;
+                if (sortValue === 'alphabetical_asc') return t.sort_az;
+                if (sortValue === 'alphabetical_desc') return t.sort_za;
                 return '';
             },
 
@@ -446,7 +466,7 @@
             touchMultiplier: 2,
             infinite: false,
         });
-        
+
         window.lenis = lenis;
 
         // Double Lenis for horizontal pills

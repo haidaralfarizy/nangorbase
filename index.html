@@ -200,6 +200,12 @@
                                     <div class="dropdown-option" :class="sortBy === 'highest_rated' ? 'active' : ''"
                                         @click="sortBy = 'highest_rated'; open = false"
                                         x-text="TRANSLATIONS[currentLang].sort_rating"></div>
+                                    <div class="dropdown-option" :class="sortBy === 'alphabetical_asc' ? 'active' : ''"
+                                        @click="sortBy = 'alphabetical_asc'; open = false"
+                                        x-text="TRANSLATIONS[currentLang].sort_az"></div>
+                                    <div class="dropdown-option" :class="sortBy === 'alphabetical_desc' ? 'active' : ''"
+                                        @click="sortBy = 'alphabetical_desc'; open = false"
+                                        x-text="TRANSLATIONS[currentLang].sort_za"></div>
                                 </div>
                             </div>
                         </div>
@@ -226,6 +232,32 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- View Switcher -->
+                        <div class="settings-wrapper">
+                            <label class="settings-label">
+                                <i data-lucide="layout" class="icon-sm"></i> <span
+                                    x-text="TRANSLATIONS[currentLang].view_label"></span>
+                            </label>
+                            <div class="custom-dropdown" x-data="{ open: false }" @click.away="open = false">
+                                <button class="dropdown-trigger" @click="open = !open" :aria-expanded="open">
+                                    <span x-text="viewMode === 'list' ? TRANSLATIONS[currentLang].view_list : TRANSLATIONS[currentLang].view_grid"></span>
+                                    <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
+                                </button>
+                                <div class="dropdown-menu" :class="open ? 'show' : ''">
+                                    <div class="dropdown-option" :class="viewMode === 'grid' ? 'active' : ''"
+                                        @click="viewMode = 'grid'; open = false" style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="layout-grid" class="icon-xs"></i>
+                                        <span x-text="TRANSLATIONS[currentLang].view_grid"></span>
+                                    </div>
+                                    <div class="dropdown-option" :class="viewMode === 'list' ? 'active' : ''"
+                                        @click="viewMode = 'list'; open = false" style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="list" class="icon-xs"></i>
+                                        <span x-text="TRANSLATIONS[currentLang].view_list"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <button class="clear-filters-btn" :class="hasActiveFilters ? 'is-visible' : ''"
@@ -239,7 +271,7 @@
 
 
         <!-- Cards Grid -->
-        <div class="places-grid" x-show="filteredPlaces.length > 0"
+        <div class="places-grid" :class="viewMode === 'list' ? 'list-view' : ''" x-show="filteredPlaces.length > 0"
             x-effect="filteredPlaces; $nextTick(() => { if(window.lucide) lucide.createIcons({root: $el}) })">
             <template x-for="(place, index) in filteredPlaces" :key="place.id">
                 <div class="place-card" x-init="$nextTick(() => $el.classList.add('card-visible'))"
@@ -257,8 +289,8 @@
                                     style="width: 1.25rem; height: 1.25rem; opacity: 0.9; color: white; flex-shrink: 0; margin-top: 0.125rem;"></i>
                                 <h3 class="card-name" x-text="place.name"></h3>
                             </div>
-                            <div class="card-rating" x-show="place.rating"
-                                x-text="place.rating ? place.rating.toFixed(1) : ''"></div>
+                            <div class="card-date" x-show="place.last_updated"
+                                x-text="formatDate(place.last_updated)"></div>
                         </div>
                     </div>
 
@@ -272,17 +304,9 @@
                         </div>
 
                         <!-- Description -->
-                        <p class="card-description" x-text="place.description"></p>
+                        <p class="card-description" x-show="place.description && place.description.length > 0"
+                            x-html="Array.isArray(place.description) ? place.description.map(d => String(d).replace(/</g, '&lt;')).join('<span class=\'card-address-separator\' style=\'margin: 0 0.35rem;\'>•</span>') : place.description"></p>
 
-                        <!-- Tags -->
-                        <div class="card-tags">
-                            <template x-for="(tag, i) in place.tags.slice(0, 3)" :key="i">
-                                <span class="card-tag" x-text="tag"></span>
-                            </template>
-                            <span class="card-tag card-tag-overflow" x-show="place.tags.length > 3"
-                                x-text="'+' + (place.tags.length - 3)">
-                            </span>
-                        </div>
 
                         <!-- Footer -->
                         <div class="card-footer">
