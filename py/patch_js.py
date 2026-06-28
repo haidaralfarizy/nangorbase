@@ -45,7 +45,7 @@ alpine_init = """
 document.addEventListener('alpine:init', () => {
     Alpine.data('filterSystem', () => ({
         categories: CATEGORIES,
-        zones: ['Ciseke', 'GKPN', 'Jalan Sayang', 'Jatos / Raya Jatinangor', 'Hegarmanah'],
+        zones: ['Ciseke', 'GKPN', 'Jalan Sayang', 'Jatos', 'Hegarmanah'],
         facilitiesList: [
             { id: 'stopkontak', label: { id: 'Banyak Stopkontak', en: 'Plentiful Outlets' }, icon: 'plug' },
             { id: 'wifi', label: { id: 'Wi-Fi Kencang', en: 'Fast Wi-Fi' }, icon: 'wifi' },

@@ -5,17 +5,16 @@
 const TRANSLATIONS = Object.freeze({
     id: Object.freeze({
         "hero_tagline": "Apapun yang kamu butuhkan di Jatinangor, dari mahasiswa, untuk mahasiswa.",
-        "hero_subtitle": "Panduan lengkap tempat-tempat penting di sekitar kampus ITB Jatinangor dan Unpad.",
+        "hero_subtitle": "Panduan tempat-tempat penting di sekitar kampus ITB Jatinangor dan Unpad.",
         "hero_stat_listings": "Lokasi",
         "hero_stat_categories": "Kategori",
         "hero_stat_updated": "Terakhir Diperbarui",
         "search_placeholders": Object.freeze([
-            "Cari tempat fotokopi...",
-            "Cari kos praktis...",
-            "Cari tempat makan murah...",
-            "Cari sarana kesehatan...",
-            "Cari tempat nugas...",
-            "Cari jasa laundry...",
+            "Cari laundry murah...",
+            "Cari tempat print...",
+            "Cari kopi buat nugas...",
+            "Cari apotek 24 jam...",
+            "Cari kos dekat ITB..."
         ]),
         "open_now": "Buka Sekarang",
         "clear_filters": "Hapus Filter",
@@ -31,21 +30,35 @@ const TRANSLATIONS = Object.freeze({
         "footer_heading_about": "Tentang",
         "footer_about_desc": "Proyek open-source oleh mahasiswa STEI-K ITB untuk membantu navigasi kehidupan kampus di Jatinangor.",
         "footer_credits": "Dibuat oleh Haidar",
-        "footer_back_top": "Kembali ke Atas"
+        "footer_back_top": "Kembali ke Atas",
+        "filter_all_zones": "Semua Area",
+        "filter_24_hours": "24 Jam",
+        "sort_label": "Urutkan:",
+        "sort_default": "Relevan",
+        "sort_cheapest": "Termurah",
+        "sort_rating": "Rating",
+        "status_open": "Buka",
+        "status_closed": "Tutup",
+        "empty_title": "Tidak ada tempat ditemukan",
+        "empty_desc": "Coba ubah kata kunci atau hapus beberapa filter.",
+        "empty_reset": "Hapus Filter",
+        "count_showing": "Menampilkan",
+        "count_places": "tempat",
+        "count_of": "dari",
+        "card_maps_link": "Buka di Maps"
     }),
     en: Object.freeze({
         "hero_tagline": "Everything you need in Jatinangor, by students, for students.",
-        "hero_subtitle": "A comprehensive guide to essential places around ITB Jatinangor and Unpad campuses.",
+        "hero_subtitle": "A guide to essential places around ITB Jatinangor and Unpad campuses.",
         "hero_stat_listings": "Places",
         "hero_stat_categories": "Categories",
         "hero_stat_updated": "Last Updated",
         "search_placeholders": Object.freeze([
+            "Search for cheap laundry...",
             "Search for printing shops...",
-            "Search for boarding houses...",
-            "Search for cheap food...",
-            "Search for fitness places...",
-            "Search for study spots...",
-            "Search for laundry services...",
+            "Search for study cafes...",
+            "Search for 24hr pharmacies...",
+            "Search for boarding houses..."
         ]),
         "open_now": "Open Now",
         "clear_filters": "Clear Filters",
@@ -61,7 +74,22 @@ const TRANSLATIONS = Object.freeze({
         "footer_heading_about": "About",
         "footer_about_desc": "An open-source project by ITB STEI-K students to help navigate campus life in Jatinangor.",
         "footer_credits": "Built by Haidar",
-        "footer_back_top": "Back to Top"
+        "footer_back_top": "Back to Top",
+        "filter_all_zones": "All Zones",
+        "filter_24_hours": "24 Hours",
+        "sort_label": "Sort by:",
+        "sort_default": "Default",
+        "sort_cheapest": "Cheapest",
+        "sort_rating": "Rating",
+        "status_open": "Open",
+        "status_closed": "Closed",
+        "empty_title": "No places found",
+        "empty_desc": "Try changing your keywords or removing some filters.",
+        "empty_reset": "Clear Filters",
+        "count_showing": "Showing",
+        "count_places": "places",
+        "count_of": "of",
+        "card_maps_link": "Open in Maps"
     })
 });
 
@@ -76,8 +104,5 @@ const CATEGORIES = Object.freeze({
     'services': Object.freeze({ label: Object.freeze({ en: 'Services', id: 'Servis' }), icon: 'wrench' })
 });
 
-// Expose to window for Alpine access if needed, or rely on global scope if not using modules.
-// Since we are moving to strict IIFE in main.js, these constants will be globally available 
-// because this script will be loaded before main.js.
 window.TRANSLATIONS = TRANSLATIONS;
 window.CATEGORIES = CATEGORIES;

@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NangorBase - Jatinangor Directory</title>
-    <meta name="description" content="Direktori lengkap.">
+    <meta name="description"
+        content="Direktori lengkap tempat-tempat penting di sekitar kampus ITB Jatinangor dan Unpad.">
     <!-- Note: Alpine.js v3 relies on new Function() to evaluate expressions (e.g. x-text, @click). 
          Therefore, 'unsafe-eval' is strictly required in the script-src unless the entire 
          application is rewritten to use the restricted CSP build (cdn.csp.min.js) and Alpine.data() exclusively. -->
@@ -33,17 +34,26 @@
     <link rel="stylesheet" href="css/main.css">
 
     <!-- Scripts (Deferred) -->
+    <!-- 1. Config -->
     <script defer src="js/config.js"></script>
-    <script defer src="js/main.js"></script>
+    
+    <!-- 2. Dependencies required by main.js synchronously -->
     <script defer src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"
         integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed"
         crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"
         integrity="sha384-PCSoOZTpbkikBEtd/+uV3WNdc676i9KUf01KOA8CnJotvlx8rRrETbDuwdjqTYvt"
         crossorigin="anonymous"></script>
+
+    <!-- 3. App Logic (Registers Alpine data and initializes Lenis) -->
+    <script defer src="js/main.js"></script>
+
+    <!-- 4. Alpine (Must load after main.js to catch alpine:init listener) -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"
         integrity="sha384-l8f0VcPi/M1iHPv8egOnY/15TDwqgbOR1anMIJWvU6nLRgZVLTLSaNqi/TOoT5Fh"
         crossorigin="anonymous"></script>
+        
+    <!-- 5. Icons -->
     <script defer src="https://unpkg.com/lucide@0.378.0/dist/umd/lucide.min.js"
         integrity="sha384-qhUDVxItfTfdldcM+OXATzmed102bu7gbQzEzi7677Xh/Swfmh1R3gajkj18PhRK"
         crossorigin="anonymous"></script>
@@ -93,138 +103,231 @@
         </div>
     </header>
 
-    <!-- Search & Filter Bar -->
-    <div id="filter-bar" class="filter-bar" x-data="filterSystem()">
-        <div class="filter-container">
-            <!-- Search Row -->
-            <div class="search-wrapper" role="search">
-                <input type="text" id="search-input" class="search-input" x-model.debounce.300ms="searchQuery"
-                    :placeholder="currentPlaceholder" aria-label="Search places" autocomplete="off">
-                <kbd class="search-kbd" id="search-kbd" aria-hidden="true">Ctrl + K</kbd>
-            </div>
-
-            <!-- Category Pills Row -->
-            <div class="category-pills-wrapper" id="category-pills-wrapper">
-                <div id="category-pills" class="category-pills" data-lenis-prevent>
-                    <div id="category-pills-inner" class="category-pills-inner">
-                        <template x-for="(cat, key) in categories" :key="key">
-                            <button class="category-pill" :class="selectedCategories.includes(key) ? 'active' : ''"
-                                :aria-pressed="selectedCategories.includes(key).toString()"
-                                @click="toggleCategory(key)">
-                                <i :data-lucide="cat.icon" class="icon-sm"></i>
-                                <span x-text="cat.label[currentLang]"></span>
-                            </button>
-                        </template>
-                    </div>
+    <!-- Main Content wrapper for Alpine scope -->
+    <main x-data="filterSystem()" @places-error.window="hasError = true">
+        <!-- Search & Filter Bar -->
+        <div id="filter-bar" class="filter-bar">
+            <div class="filter-container">
+                <!-- Search Row -->
+                <div class="search-wrapper" role="search">
+                    <input type="text" id="search-input" class="search-input" x-model.debounce.300ms="searchQuery"
+                        @keydown.escape="$el.blur()"
+                        :placeholder="currentPlaceholder" aria-label="Search places" autocomplete="off">
+                    <kbd class="search-kbd" id="search-kbd" aria-hidden="true">Ctrl + K</kbd>
                 </div>
-            </div>
 
-            <!-- Secondary Filters Row (Zones, Operational, Budget) -->
-            <div class="secondary-filters-row">
-                <!-- Zones -->
-                <div class="custom-dropdown" x-data="{ open: false }" @click.away="open = false">
-                    <button class="dropdown-trigger" @click="open = !open" :aria-expanded="open">
-                        <i data-lucide="map-pin" class="icon-xs"></i>
-                        <span
-                            x-text="selectedZone ? selectedZone : (currentLang === 'id' ? 'Semua Area' : 'All Zones')"></span>
-                        <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
-                    </button>
-                    <div class="dropdown-menu" :class="open ? 'show' : ''">
-                        <div class="dropdown-option" :class="!selectedZone ? 'active' : ''"
-                            @click="selectedZone = null; open = false">
-                            <span x-text="currentLang === 'id' ? 'Semua Area' : 'All Zones'"></span>
+                <!-- Category Pills Row -->
+                <div class="category-pills-wrapper" id="category-pills-wrapper">
+                    <div id="category-pills" class="category-pills" data-lenis-prevent>
+                        <div id="category-pills-inner" class="category-pills-inner">
+                            <template x-for="(cat, key) in categories" :key="key">
+                                <button class="category-pill" :class="selectedCategories.includes(key) ? 'active' : ''"
+                                    :aria-pressed="selectedCategories.includes(key).toString()"
+                                    @click="toggleCategory(key)">
+                                    <i :data-lucide="cat.icon" class="icon-sm"></i>
+                                    <span x-text="cat.label[currentLang]"></span>
+                                </button>
+                            </template>
                         </div>
-                        <template x-for="zone in zones" :key="zone">
-                            <div class="dropdown-option" :class="selectedZone === zone ? 'active' : ''"
-                                @click="selectedZone = zone; open = false" x-text="zone"></div>
-                        </template>
                     </div>
                 </div>
 
-                <!-- Budget -->
-                <div class="price-filters" style="display: flex; gap: 0.5rem;">
-                    <template x-for="price in [1, 2, 3]" :key="price">
-                        <button class="price-btn" :class="selectedBudget === price ? 'active' : ''"
-                            @click="selectedBudget = selectedBudget === price ? null : price"
-                            x-text="getPriceLabel(price)">
+                <!-- Secondary Filters Row (Zones, Operational, Budget) -->
+                <div class="secondary-filters-row">
+                    <!-- Zones -->
+                    <div class="custom-dropdown" x-data="{ open: false }" @click.away="open = false">
+                        <button class="dropdown-trigger" @click="open = !open" :aria-expanded="open">
+                            <i data-lucide="map-pin" class="icon-xs"></i>
+                            <span
+                                x-text="selectedZone ? selectedZone : TRANSLATIONS[currentLang].filter_all_zones"></span>
+                            <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
                         </button>
-                    </template>
+                        <div class="dropdown-menu" :class="open ? 'show' : ''">
+                            <div class="dropdown-option" :class="!selectedZone ? 'active' : ''"
+                                @click="selectedZone = null; open = false">
+                                <span x-text="TRANSLATIONS[currentLang].filter_all_zones"></span>
+                            </div>
+                            <template x-for="zone in zones" :key="zone">
+                                <div class="dropdown-option" :class="selectedZone === zone ? 'active' : ''"
+                                    @click="selectedZone = zone; open = false" x-text="zone"></div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Budget -->
+                    <div class="price-filters" style="display: flex; gap: 0.5rem;">
+                        <template x-for="price in [1, 2, 3]" :key="price">
+                            <button class="price-btn" :class="selectedBudget === price ? 'active' : ''"
+                                @click="selectedBudget = selectedBudget === price ? null : price"
+                                x-text="getPriceLabel(price)">
+                            </button>
+                        </template>
+                    </div>
+
+                    <!-- Operational Status -->
+                    <button class="open-now-btn" :class="isOpenNow ? 'active' : ''" @click="isOpenNow = !isOpenNow">
+                        <i data-lucide="clock" class="icon-xs"></i>
+                        <span x-text="TRANSLATIONS[currentLang].open_now"></span>
+                    </button>
+                    <button class="open-now-btn" :class="is24Hours ? 'active' : ''" @click="is24Hours = !is24Hours">
+                        <i data-lucide="moon" class="icon-xs"></i>
+                        <span x-text="TRANSLATIONS[currentLang].filter_24_hours"></span>
+                    </button>
                 </div>
 
-                <!-- Operational Status -->
-                <button class="open-now-btn" :class="isOpenNow ? 'active' : ''" @click="isOpenNow = !isOpenNow">
-                    <i data-lucide="clock" class="icon-xs"></i>
-                    <span x-text="currentLang === 'id' ? 'Buka Sekarang' : 'Open Now'"></span>
-                </button>
-                <button class="open-now-btn" :class="is24Hours ? 'active' : ''" @click="is24Hours = !is24Hours">
-                    <i data-lucide="moon" class="icon-xs"></i>
-                    <span x-text="currentLang === 'id' ? '24 Jam' : '24 Hours'"></span>
-                </button>
-            </div>
+                <!-- Control Row -->
+                <div class="filter-actions">
 
-            <!-- Control Row -->
-            <div class="filter-actions">
+                    <div class="filter-actions-inner">
+                        <!-- Sort By -->
+                        <div class="settings-wrapper">
+                            <label class="settings-label">
+                                <i data-lucide="arrow-down-up" class="icon-sm"></i> <span
+                                    x-text="TRANSLATIONS[currentLang].sort_label"></span>
+                            </label>
+                            <div class="custom-dropdown" x-data="{ open: false }" @click.away="open = false">
+                                <button class="dropdown-trigger" @click="open = !open" :aria-expanded="open">
+                                    <span x-text="getSortLabel(sortBy)"></span>
+                                    <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
+                                </button>
+                                <div class="dropdown-menu" :class="open ? 'show' : ''">
+                                    <div class="dropdown-option" :class="sortBy === 'default' ? 'active' : ''"
+                                        @click="sortBy = 'default'; open = false"
+                                        x-text="TRANSLATIONS[currentLang].sort_default"></div>
+                                    <div class="dropdown-option" :class="sortBy === 'cheapest' ? 'active' : ''"
+                                        @click="sortBy = 'cheapest'; open = false"
+                                        x-text="TRANSLATIONS[currentLang].sort_cheapest"></div>
+                                    <div class="dropdown-option" :class="sortBy === 'highest_rated' ? 'active' : ''"
+                                        @click="sortBy = 'highest_rated'; open = false"
+                                        x-text="TRANSLATIONS[currentLang].sort_rating"></div>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="filter-actions-inner">
-                    <!-- Sort By -->
-                    <div class="settings-wrapper">
-                        <label class="settings-label">
-                            <i data-lucide="arrow-down-up" class="icon-sm"></i> <span
-                                x-text="currentLang === 'id' ? 'Urutkan:' : 'Sort by:'"></span>
-                        </label>
-                        <div class="custom-dropdown" x-data="{ open: false }" @click.away="open = false">
-                            <button class="dropdown-trigger" @click="open = !open" :aria-expanded="open">
-                                <span x-text="getSortLabel(sortBy)"></span>
-                                <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
-                            </button>
-                            <div class="dropdown-menu" :class="open ? 'show' : ''">
-                                <div class="dropdown-option" :class="sortBy === 'default' ? 'active' : ''"
-                                    @click="sortBy = 'default'; open = false"
-                                    x-text="currentLang === 'id' ? 'Relevan' : 'Default'"></div>
-                                <div class="dropdown-option" :class="sortBy === 'cheapest' ? 'active' : ''"
-                                    @click="sortBy = 'cheapest'; open = false"
-                                    x-text="currentLang === 'id' ? 'Termurah' : 'Cheapest'"></div>
-                                <div class="dropdown-option" :class="sortBy === 'highest_rated' ? 'active' : ''"
-                                    @click="sortBy = 'highest_rated'; open = false"
-                                    x-text="currentLang === 'id' ? 'Rating' : 'Rating'"></div>
+                        <!-- Limit -->
+                        <div class="settings-wrapper">
+                            <label class="settings-label">
+                                <i data-lucide="settings-2" class="icon-sm"></i> <span
+                                    x-text="TRANSLATIONS[currentLang].show_label"></span>
+                            </label>
+                            <div class="custom-dropdown" x-data="{ open: false }" @click.away="open = false">
+                                <button class="dropdown-trigger" @click="open = !open" :aria-expanded="open">
+                                    <span x-text="limit === 'all' ? TRANSLATIONS[currentLang].show_all : limit"></span>
+                                    <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
+                                </button>
+                                <div class="dropdown-menu" :class="open ? 'show' : ''">
+                                    <template x-for="val in [12, 24, 36, 'all']" :key="val">
+                                        <div class="dropdown-option" :class="limit === val ? 'active' : ''"
+                                            @click="limit = val; open = false">
+                                            <span
+                                                x-text="val === 'all' ? TRANSLATIONS[currentLang].show_all : val"></span>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Limit -->
-                    <div class="settings-wrapper">
-                        <label class="settings-label">
-                            <i data-lucide="settings-2" class="icon-sm"></i> <span
-                                x-text="currentLang === 'id' ? 'Tampilkan:' : 'Show:'"></span>
-                        </label>
-                        <div class="custom-dropdown" x-data="{ open: false }" @click.away="open = false">
-                            <button class="dropdown-trigger" @click="open = !open" :aria-expanded="open">
-                                <span
-                                    x-text="limit === 'all' ? (currentLang === 'id' ? 'Semua' : 'All') : limit"></span>
-                                <i data-lucide="chevron-down" class="icon-xs dropdown-arrow"></i>
-                            </button>
-                            <div class="dropdown-menu" :class="open ? 'show' : ''">
-                                <template x-for="val in [12, 24, 36, 'all']" :key="val">
-                                    <div class="dropdown-option" :class="limit === val ? 'active' : ''"
-                                        @click="limit = val; open = false">
-                                        <span
-                                            x-text="val === 'all' ? (currentLang === 'id' ? 'Semua' : 'All') : val"></span>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
+                    <button class="clear-filters-btn" :class="hasActiveFilters ? 'is-visible' : ''"
+                        @click="clearFilters()">
+                        <i data-lucide="x" class="icon-xs"></i>
+                        <span x-text="TRANSLATIONS[currentLang].clear_filters"></span>
+                    </button>
                 </div>
-
-                <button class="clear-filters-btn" :class="hasActiveFilters ? 'is-visible' : ''" @click="clearFilters()">
-                    <i data-lucide="x" class="icon-xs"></i>
-                    <span x-text="currentLang === 'id' ? 'Hapus Filter' : 'Clear Filters'"></span>
-                </button>
             </div>
         </div>
-    </div>
-    <!-- Cards Placeholder -->
-    <div class="cards-placeholder"></div>
+
+
+        <!-- Cards Grid -->
+        <div class="places-grid" x-show="filteredPlaces.length > 0"
+            x-effect="filteredPlaces; $nextTick(() => { if(window.lucide) lucide.createIcons({root: $el}) })">
+            <template x-for="(place, index) in filteredPlaces" :key="place.id">
+                <div class="place-card" x-init="$nextTick(() => $el.classList.add('card-visible'))"
+                    :style="{ transitionDelay: (index > 12 ? 12 : index) * 0.05 + 's' }"
+                    x-transition:leave="card-leave-active" x-transition:leave-end="card-leave-to">
+
+                    <div class="card-hero">
+                        <template x-if="place.image_url">
+                            <img :src="place.image_url" class="card-hero-image" :alt="place.name">
+                        </template>
+
+                        <div class="card-header">
+                            <div style="display: flex; align-items: flex-start; gap: 0.5rem;">
+                                <i :data-lucide="CATEGORIES[place.category] ? CATEGORIES[place.category].icon : 'map-pin'"
+                                    style="width: 1.25rem; height: 1.25rem; opacity: 0.9; color: white; flex-shrink: 0; margin-top: 0.125rem;"></i>
+                                <h3 class="card-name" x-text="place.name"></h3>
+                            </div>
+                            <div class="card-rating" x-show="place.rating"
+                                x-text="place.rating ? place.rating.toFixed(1) : ''"></div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Address & Zone -->
+                        <div class="card-address">
+                            <i data-lucide="map-pin"></i>
+                            <span x-text="place.address" class="card-address-text"></span>
+                            <span class="card-address-separator">•</span>
+                            <span class="card-zone" x-text="place.zone"></span>
+                        </div>
+
+                        <!-- Description -->
+                        <p class="card-description" x-text="place.description"></p>
+
+                        <!-- Tags -->
+                        <div class="card-tags">
+                            <template x-for="(tag, i) in place.tags.slice(0, 3)" :key="i">
+                                <span class="card-tag" x-text="tag"></span>
+                            </template>
+                            <span class="card-tag card-tag-overflow" x-show="place.tags.length > 3"
+                                x-text="'+' + (place.tags.length - 3)">
+                            </span>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="card-footer">
+                            <div class="card-status-row">
+                                <template x-if="isPlaceOpen(place)">
+                                    <span class="card-status open"
+                                        x-text="TRANSLATIONS[currentLang].status_open"></span>
+                                </template>
+                                <template x-if="!isPlaceOpen(place)">
+                                    <span class="card-status closed"
+                                        x-text="TRANSLATIONS[currentLang].status_closed"></span>
+                                </template>
+                                <span class="card-price" x-text="getPriceLabel(place.price_range)"></span>
+                            </div>
+                            <a class="card-maps-link" :href="place.maps_url" target="_blank" rel="noopener noreferrer"
+                                :aria-label="'Buka ' + place.name + ' di Google Maps'">
+                                <i data-lucide="map-pin"></i>
+                                <span x-text="TRANSLATIONS[currentLang].card_maps_link"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- Empty State -->
+        <div class="places-empty" x-show="filteredPlaces.length === 0 && !hasError">
+            <i data-lucide="search-x" class="places-empty-icon"></i>
+            <h3 class="places-empty-title" x-text="TRANSLATIONS[currentLang].empty_title"></h3>
+            <p class="places-empty-subtitle" x-text="TRANSLATIONS[currentLang].empty_desc"></p>
+            <button class="clear-filters-btn is-visible"
+                style="position: relative; transform: none; opacity: 1; visibility: visible; margin-top: 1rem;"
+                @click="clearFilters()" x-show="hasActiveFilters">
+                <i data-lucide="x" class="icon-xs"></i>
+                <span x-text="TRANSLATIONS[currentLang].empty_reset"></span>
+            </button>
+        </div>
+
+        <!-- Error State -->
+        <div class="places-empty" x-show="hasError" style="display: none;">
+            <i data-lucide="alert-circle" class="places-empty-icon" style="color: #EF4444;"></i>
+            <h3 class="places-empty-title">Gagal memuat data</h3>
+            <p class="places-empty-subtitle">Silakan periksa koneksi internet Anda dan muat ulang halaman.</p>
+        </div>
+    </main>
 
     <!-- Footer -->
     <footer class="site-footer">
@@ -246,20 +349,23 @@
                     <span data-i18n="footer_updated">Terakhir diperbarui:</span>
                     <strong id="footer-last-updated"></strong>
                 </p>
+                <p
+                    style="font-size: 0.75rem; margin-top: 1rem; color: var(--text-secondary); opacity: 0.7; font-weight: 600;">
+                    v1.0.0</p>
             </div>
             <!-- Column 2: Contribute -->
             <div class="footer-col">
                 <h4 class="footer-heading" data-i18n="footer_heading_contribute">Kontribusi</h4>
                 <ul class="footer-link-list">
                     <li>
-                        <a href="https://github.com/haidaralfarizy/jatinangor" target="_blank" rel="noopener noreferrer"
+                        <a href="https://github.com/haidaralfarizy/nangorbase" target="_blank" rel="noopener noreferrer"
                             class="footer-link">
                             <i data-lucide="github" class="icon-sm"></i>
                             <span data-i18n="footer_github">Lihat di GitHub</span>
                         </a>
                     </li>
                     <li>
-                        <a href="https://github.com/haidaralfarizy/jatinangor/issues/new?labels=suggestion&title=Tambah+Lokasi%3A+"
+                        <a href="https://github.com/haidaralfarizy/nangorbase/issues/new?labels=suggestion&title=Tambah+Lokasi%3A+"
                             target="_blank" rel="noopener noreferrer" class="footer-link">
                             <i data-lucide="plus-circle" class="icon-sm"></i>
                             <span data-i18n="footer_submit_link">Tambahkan Lokasi Baru</span>
@@ -277,7 +383,7 @@
                     <i data-lucide="graduation-cap" class="icon-sm"></i>
                     <span data-i18n="footer_credits">Dibuat oleh Haidar</span>
                 </a>
-                <button class="footer-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+                <button class="footer-back-top" onclick="window.lenis ? window.lenis.scrollTo(0) : window.scrollTo({top:0,behavior:'smooth'})">
                     <i data-lucide="arrow-up" class="icon-sm"></i>
                     <span data-i18n="footer_back_top">Kembali ke Atas</span>
                 </button>

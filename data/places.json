@@ -1,32 +1,32 @@
 [
     {
         "id": "food-cheap-001",
-        "name": "Warteg Ibu Sari Premium",
+        "name": "Altan's Sex Workshop",
         "category": "food-cheap",
         "tags": [
-            "Nasi Rames",
-            "Lauk Pauk",
-            "Murah",
-            "Mahasiswa"
+            "Gay",
+            "Orgy",
+            "Nigger Sex"
         ],
-        "address": "Jl. Raya Jatinangor No. 123",
+        "address": "Jl. Raya Jatinangor No. 69",
+        "zone": "Jatos",
         "maps_url": "https://maps.google.com/?q=Warteg+Ibu+Sari+Jatinangor",
         "price_range": 1,
-        "description": "Warteg andalan mahasiswa dengan pilihan lauk yang sangat beragam dan harga bersahabat.",
+        "description": "Tempat andalan mahasiswa untuk melepas penat.",
         "hours": {
             "is_24_hours": false,
             "open": "06:00",
-            "close": "21:00"
+            "close": "19:00"
         },
         "phone": "0812-2345-6789",
-        "last_updated": "2026-06-01",
-        "zone": "Jatos / Raya Jatinangor",
         "rating": 4.5,
-        "facilities": []
+        "image_url": null,
+        "last_updated": "2026-06-01",
+        "featured": false
     },
     {
         "id": "food-cafe-001",
-        "name": "Plumeria Cafe",
+        "name": "Cafe 123",
         "category": "food-cafe-wifi",
         "tags": [
             "Kopi",
@@ -35,45 +35,42 @@
             "wfc"
         ],
         "address": "Jl. Ciseke Besar No. 45",
+        "zone": "Ciseke",
         "maps_url": "https://maps.google.com/?q=Plumeria+Cafe+Jatinangor",
         "price_range": 2,
-        "description": "Tempat nugas nyaman dengan kopi enak. Colokan banyak dan wifi kencang.",
+        "description": "alhamdulillah",
         "hours": {
             "is_24_hours": false,
             "open": "10:00",
             "close": "23:00"
         },
-        "featured": true,
-        "last_updated": "2026-06-15",
-        "zone": "Ciseke",
+        "phone": null,
         "rating": 4.8,
-        "facilities": [
-            "wifi",
-            "stopkontak",
-            "smoking"
-        ],
-        "phone": null
+        "image_url": null,
+        "last_updated": "2026-06-15",
+        "featured": true
     },
     {
         "id": "printing-001",
-        "name": "Tiara Fotokopi & Print",
+        "name": "KDMP",
         "category": "printing",
         "tags": [
             "Print Warna",
-            "Jilid Hardcover",
+            "Hardcover",
             "Skripsi"
         ],
-        "address": "Gerbang Lama Unpad",
+        "address": "Rumah Kenanga",
+        "zone": "Jalan Sayang",
         "maps_url": "https://maps.google.com/?q=Tiara+Fotokopi",
         "price_range": 1,
-        "description": "Buka 24 jam saat musim ujian. Melayani jilid skripsi kilat.",
-        "phone": "0856-7890-1234",
-        "last_updated": "2025-10-01",
+        "description": "HIDUP JOKOWI",
         "hours": {
             "is_24_hours": true
         },
-        "zone": "Jalan Sayang",
+        "phone": "0856-7890-1234",
         "rating": 4.2,
-        "facilities": []
+        "image_url": null,
+        "last_updated": "2025-10-01",
+        "featured": false
     }
 ]

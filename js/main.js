@@ -5,13 +5,13 @@
     let currentLang = localStorage.getItem('lang') || 'id';
     let allPlaces = [];
 
-    function isPlaceOpenNow(place) {
+    function isPlaceOpenNow(place, nowWIB) {
         if (!place.hours) return true;
         if (place.hours.is_24_hours) return true;
         if (!place.hours.open || !place.hours.close) return false;
 
         // Evaluate against Asia/Jakarta (WIB) timezone
-        const nowWIB = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
+        nowWIB = nowWIB || new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
         const currentTimeMinutes = nowWIB.getHours() * 60 + nowWIB.getMinutes();
 
         const [openH, openM] = place.hours.open.split(':').map(Number);
@@ -178,6 +178,7 @@
             })
             .catch(err => {
                 console.error('Error fetching places:', err);
+                document.dispatchEvent(new CustomEvent('places-error'));
             });
 
         if (typeof Lenis !== 'undefined') {
@@ -188,54 +189,7 @@
             }
             requestAnimationFrame(rafGlobal);
 
-            // Premium Scroll Effects
-            const heroInner = document.querySelector('.hero-inner');
-            const filterContainer = document.querySelector('.filter-container');
-            const siteFooter = document.querySelector('.site-footer');
 
-            let ticking = false;
-            globalLenis.on('scroll', (e) => {
-                if (!ticking) {
-                    window.requestAnimationFrame(() => {
-                        const scrollY = e.scroll;
-                        const velocity = e.velocity;
-                        const maxScroll = e.limit;
-
-                        // 1. Hero Parallax & Fade
-                        if (heroInner && scrollY < window.innerHeight) {
-                            const opacity = Math.max(0, 1 - (scrollY / (window.innerHeight * 0.75)));
-                            const translateY = scrollY * 0.4; // 40% slower than scroll
-                            heroInner.style.transform = `translateY(${translateY}px)`;
-                            heroInner.style.opacity = opacity;
-                        }
-
-                        // 2. Filter Bar Velocity Scale (Squish effect)
-                        if (filterContainer) {
-                            // Max velocity cap to prevent extreme scaling
-                            const maxVelocity = 40;
-                            const normalizedVel = Math.min(Math.abs(velocity), maxVelocity);
-                            // Scale down to 98% at max velocity
-                            const scale = 1 - (normalizedVel / maxVelocity) * 0.02; 
-                            filterContainer.style.transform = `scale(${scale})`;
-                        }
-
-                        // 3. Footer Reverse Parallax Reveal
-                        if (siteFooter && maxScroll > 0) {
-                            const footerDistance = maxScroll - scrollY;
-                            const footerHeight = siteFooter.offsetHeight;
-                            if (footerDistance < window.innerHeight) {
-                                // Parallax strength: 50px offset initially, smoothly hitting 0px
-                                const progress = Math.max(0, 1 - (footerDistance / footerHeight)); 
-                                const translateY = (1 - progress) * 50; 
-                                siteFooter.style.transform = `translateY(${translateY}px)`;
-                            }
-                        }
-                        
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
         }
     });
 
@@ -255,8 +209,10 @@
         Alpine.data('filterSystem', () => ({
             currentLang: localStorage.getItem('lang') || 'id',
             currentPlaceholder: '',
+            _placeholderIndex: 0,
+            hasError: false,
             categories: CATEGORIES,
-            zones: ['Ciseke', 'GKPN', 'Jalan Sayang', 'Jatos / Raya Jatinangor', 'Hegarmanah'],
+            zones: ['Ciseke', 'GKPN', 'Jalan Sayang', 'Jatos', 'Hegarmanah'],
             searchQuery: '',
             selectedCategories: [],
             selectedBudget: null,
@@ -266,6 +222,7 @@
             sortBy: 'default',
             limit: 12,
             fuse: null,
+            places: [],
 
             init() {
                 window.addEventListener('language-changed', (e) => {
@@ -280,12 +237,20 @@
                     }
                 }, 3000);
 
-                // Setup Fuse
+
+
+                // Setup Fuse options
                 const options = {
                     keys: ['name', 'tags', 'category', 'description'],
                     threshold: 0.3
                 };
-                this.fuse = new Fuse(allPlaces, options);
+                this.fuse = new Fuse(this.places, options);
+
+                // Listen for fetched data
+                document.addEventListener('places-loaded', () => {
+                    this.places = allPlaces;
+                    this.fuse = new Fuse(this.places, options);
+                });
 
                 // Watch for changes to update lucide icons
                 this.$watch('selectedCategories', () => this.refreshIcons());
@@ -296,14 +261,14 @@
                 this.$watch('sortBy', () => this.refreshIcons());
                 this.$watch('limit', () => this.refreshIcons());
 
-                setTimeout(() => {
+                this.$nextTick(() => {
                     this.initDragScroll();
-                }, 100);
+                });
             },
 
             refreshIcons() {
                 this.$nextTick(() => {
-                    if (window.lucide) lucide.createIcons();
+                    if (window.lucide) lucide.createIcons({root: this.$root});
                 });
             },
 
@@ -318,16 +283,20 @@
             },
 
             get filteredPlaces() {
-                let results = allPlaces;
+                let results = this.places;
 
-                if (this.searchQuery.trim().length > 0) {
+                if (this.searchQuery.trim().length > 0 && this.fuse) {
                     results = this.fuse.search(this.searchQuery).map(res => res.item);
                 }
+
+                const nowWIB = this.isOpenNow || this.sortBy === 'default' /* if needed */ 
+                    ? new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" })) 
+                    : null;
 
                 results = results.filter(place => {
                     if (this.selectedCategories.length > 0 && !this.selectedCategories.includes(place.category)) return false;
                     if (this.selectedBudget !== null && place.price_range !== this.selectedBudget) return false;
-                    if (this.isOpenNow && !isPlaceOpenNow(place)) return false;
+                    if (this.isOpenNow && !isPlaceOpenNow(place, nowWIB)) return false;
                     if (this.is24Hours && (!place.hours || !place.hours.is_24_hours)) return false;
                     if (this.selectedZone !== null && place.zone !== this.selectedZone) return false;
                     return true;
@@ -366,16 +335,14 @@
 
             updatePlaceholder() {
                 const placeholders = TRANSLATIONS[this.currentLang].search_placeholders;
-                if (!this.currentPlaceholder || !placeholders.includes(this.currentPlaceholder)) {
-                    this.currentPlaceholder = placeholders[0];
-                }
+                this._placeholderIndex = 0;
+                this.currentPlaceholder = placeholders[this._placeholderIndex];
             },
 
             rotatePlaceholder() {
                 const placeholders = TRANSLATIONS[this.currentLang].search_placeholders;
-                const currentIndex = placeholders.indexOf(this.currentPlaceholder);
-                const nextIndex = (currentIndex + 1) % placeholders.length;
-                this.currentPlaceholder = placeholders[nextIndex];
+                this._placeholderIndex = (this._placeholderIndex + 1) % placeholders.length;
+                this.currentPlaceholder = placeholders[this._placeholderIndex];
             },
 
             getPriceLabel(priceRange) {
@@ -387,16 +354,25 @@
                 }
             },
 
-            getSortLabel(sortValue) {
-                if (this.currentLang === 'id') {
-                    if (sortValue === 'default') return 'Relevan';
-                    if (sortValue === 'cheapest') return 'Termurah';
-                    if (sortValue === 'highest_rated') return 'Rating';
-                } else {
-                    if (sortValue === 'default') return 'Default';
-                    if (sortValue === 'cheapest') return 'Cheapest';
-                    if (sortValue === 'highest_rated') return 'Rating';
+            getPriceSymbol(priceRange) {
+                switch (priceRange) {
+                    case 1: return 'Rp';
+                    case 2: return 'Rp Rp';
+                    case 3: return 'Rp Rp Rp';
+                    default: return '';
                 }
+            },
+
+            isPlaceOpen(place) {
+                return isPlaceOpenNow(place);
+            },
+
+            getSortLabel(sortValue) {
+                if (!window.TRANSLATIONS) return '';
+                const t = window.TRANSLATIONS[this.currentLang];
+                if (sortValue === 'default') return t.sort_default;
+                if (sortValue === 'cheapest') return t.sort_cheapest;
+                if (sortValue === 'highest_rated') return t.sort_rating;
                 return '';
             },
 
@@ -451,27 +427,49 @@
                     window.addEventListener('resize', updateScrollMask, { passive: true });
                     updateScrollMask();
 
-                    const isMobile = window.innerWidth <= 640;
-                    if (typeof Lenis !== 'undefined' && !isMobile) {
-                        const content = document.getElementById('category-pills-inner');
-                        if (content) {
-                            const lenis = new Lenis({
-                                wrapper: slider,
-                                content: content,
-                                orientation: 'horizontal',
-                                gestureOrientation: 'both',
-                                smoothWheel: true,
-                                wheelMultiplier: 1.2
-                            });
-                            function raf(time) {
-                                lenis.raf(time);
-                                requestAnimationFrame(raf);
-                            }
-                            requestAnimationFrame(raf);
-                        }
-                    }
+                    updateScrollMask();
                 }
             }
         }));
     });
+
+    // Initialize Lenis for smooth scrolling
+    if (typeof Lenis !== 'undefined') {
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        });
+        
+        window.lenis = lenis;
+
+        // Double Lenis for horizontal pills
+        const slider = document.getElementById('category-pills');
+        const lenisPills = slider ? new Lenis({
+            wrapper: slider,
+            content: slider.querySelector('.category-pills-inner'),
+            orientation: 'horizontal',
+            gestureOrientation: 'both',
+            direction: 'horizontal',
+            gestureDirection: 'both',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+        }) : null;
+
+        function raf(time) {
+            lenis.raf(time);
+            if (lenisPills) lenisPills.raf(time);
+            requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+    }
 })();
